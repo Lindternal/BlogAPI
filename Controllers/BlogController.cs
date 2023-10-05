@@ -12,19 +12,19 @@ namespace BlogAPI.Controllers
         [HttpGet(Name = "GetBlog")]
         public ActionResult<IEnumerable<Blog>> Get()
         {
-            if (Data.Base.Posts.Count <= 0)
+            if (Logic.Logic.GetBaseCount() <= 0)
             {
                 return NoContent();
             }
 
-            return Ok(Data.Base.Posts);
+            return Ok(Logic.Logic.GetBaseList());
         }
 
         // GET api/<PostController>/5
         [HttpGet("{id}")]
         public ActionResult<Blog> Get(int id)
         {
-            var blog = Data.Base.Posts[id];
+            var blog = Logic.Logic.GetBlogByID(id);
 
             if (blog == null)
             {
@@ -43,7 +43,7 @@ namespace BlogAPI.Controllers
                 return BadRequest();
             }
 
-            Data.Base.Posts.Add(value);
+            Logic.Logic.AddToBase(value);
 
             return Created("Get", value);
         }
@@ -57,7 +57,7 @@ namespace BlogAPI.Controllers
                 return BadRequest();
             }
 
-            var blog = Data.Base.Posts[id];
+            var blog = Logic.Logic.GetBlogByID(id);
 
             if(blog == null)
             {
@@ -65,7 +65,7 @@ namespace BlogAPI.Controllers
             }
 
             blog = value;
-            Data.Base.Posts[id] = blog;
+            Logic.Logic.SetBlogByID(id, blog);
 
             return NoContent();
         }
@@ -74,17 +74,17 @@ namespace BlogAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            if (id < 0 || id >= Data.Base.Posts.Count)
+            if (id < 0 || id >= Logic.Logic.GetBaseCount())
             {
                 return BadRequest();
             }
 
-            if (Data.Base.Posts[id] == null)
+            if (Logic.Logic.GetBlogByID(id) == null)
             {
                 return NotFound();
             }
 
-            Data.Base.Posts.RemoveAt(id);
+            Logic.Logic.RemoveBlogByID(id);
 
             return NoContent();
         }
